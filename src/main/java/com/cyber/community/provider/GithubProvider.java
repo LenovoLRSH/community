@@ -1,9 +1,8 @@
-package com.cyber.community.community.provider;
+package com.cyber.community.provider;
 
 import com.alibaba.fastjson.JSON;
-import com.cyber.community.community.dto.AccessTokenDTO;
-import com.cyber.community.community.dto.GithubUser;
-import com.sun.xml.internal.ws.api.model.MEP;
+import com.cyber.community.dto.AccessTokenDTO;
+import com.cyber.community.dto.GithubUser;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 

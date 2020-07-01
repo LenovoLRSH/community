@@ -1,8 +1,10 @@
-package com.cyber.community.community.controller;
+package com.cyber.community.controller;
 
-import com.cyber.community.community.dto.AccessTokenDTO;
-import com.cyber.community.community.dto.GithubUser;
-import com.cyber.community.community.provider.GithubProvider;
+import com.cyber.community.dto.AccessTokenDTO;
+import com.cyber.community.dto.GithubUser;
+import com.cyber.community.mapper.UserMapper;
+import com.cyber.community.model.User;
+import com.cyber.community.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 @Controller
 public class AuthorizeController {
@@ -26,6 +29,9 @@ public class AuthorizeController {
     @Value("${github.redirect.url}")
     private String redirectUrl;
 
+    //@Autowired
+//    private UserMapper userMapper;
+
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
@@ -39,11 +45,21 @@ public class AuthorizeController {
         accessTokenDTO.setState(state);
 
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
-        GithubUser user = githubProvider.getUser(accessToken);
-        if (user != null) {
-            System.out.println("获取到用户名是：" + user.getName());
+        GithubUser githubUser = githubProvider.getUser(accessToken);
+        if (githubUser != null) {
+            //System.out.println("获取到用户名是：" + githubUser.getName());
             //登录成功
-            request.getSession().setAttribute("user",user);
+            User user = new User();
+            user.setToken(UUID.randomUUID().toString());
+            user.setName(githubUser.getName());
+            user.setAccountId(String.valueOf(githubUser.getId()));
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+//            userMapper.insert(user);
+            System.out.println(user.toString());
+
+            request.getSession().setAttribute("user",githubUser);
+
             return "redirect:/";
 
         } else {

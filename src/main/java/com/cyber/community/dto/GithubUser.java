@@ -1,4 +1,4 @@
-package com.cyber.community.community.dto;
+package com.cyber.community.dto;
 
 public class GithubUser {
     private String name;
