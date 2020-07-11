@@ -32,22 +32,6 @@ public class IndexController {
                         @RequestParam(name = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "3") Integer size) {
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null && cookies.length == 0) {
-            return "index";
-        }
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                String token = cookie.getValue();
-                User user = userMapper.findByToken(token);
-                if (user != null) {
-//                    System.out.println(user.toString());
-                    request.getSession().setAttribute("user", user);
-                }
-                break;
-            }
-        }
-
         PaginationDTO pagination = questionService.list(page, size);
         model.addAttribute("pagination", pagination);
         return "index";

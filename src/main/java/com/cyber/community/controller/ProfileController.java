@@ -29,22 +29,11 @@ public class ProfileController {
                           HttpServletRequest request,
                           @RequestParam(name = "page", defaultValue = "1") Integer page,
                           @RequestParam(name = "size", defaultValue = "3") Integer size) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null && cookies.length == 0) {
-            return "index";
-        }
-        User user = new User();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                if (user != null) {
-                    request.getSession().setAttribute("user", user);
-                }
-                break;
-            }
-        }
 
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return "redirect:/";
+        }
 
         if (action.contains("questions")) {
             model.addAttribute("section","questions");
