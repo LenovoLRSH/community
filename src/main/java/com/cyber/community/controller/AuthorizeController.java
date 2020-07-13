@@ -5,6 +5,7 @@ import com.cyber.community.dto.GithubUser;
 import com.cyber.community.mapper.UserMapper;
 import com.cyber.community.model.User;
 import com.cyber.community.provider.GithubProvider;
+import com.cyber.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -32,8 +33,11 @@ public class  AuthorizeController {
     private String redirectUrl;
 
 //    @Autowired(required = false)//p17注入问题。
+//    @Autowired
+//    private UserMapper userMapper;
+
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
@@ -58,15 +62,14 @@ public class  AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
+
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            System.out.println(user.toString());
-            userMapper.insert(user);
-
+            //System.out.println(user.toString());
+            userService.creareUpdata(user);
             //手动写入cookie
-            response.addCookie(new Cookie("token",token));
-
+            Cookie cookie = new Cookie("token", token);
+            cookie.setMaxAge(60*60*24*30*6);
+            response.addCookie(cookie);
             //request.getSession().setAttribute("user",githubUser);
 
             return "redirect:/";
@@ -76,5 +79,15 @@ public class  AuthorizeController {
             return "redirect:/";
 
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }
