@@ -4,6 +4,7 @@ import com.cyber.community.dto.PaginationDTO;
 import com.cyber.community.dto.QuestionDTO;
 import com.cyber.community.exception.CustomizeErrorCode;
 import com.cyber.community.exception.CustomizeException;
+import com.cyber.community.mapper.QuestionExtMapper;
 import com.cyber.community.mapper.QuestionMapper;
 import com.cyber.community.model.Question;
 import com.cyber.community.model.QuestionExample;
@@ -22,6 +23,9 @@ public class QuestionService {
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -122,5 +126,12 @@ public class QuestionService {
             }
         }
 
+    }
+
+    public void incView(Integer id) {
+        Question record = new Question();
+        record.setId(id);
+        record.setViewCount(1);
+        questionExtMapper.incView(record);
     }
 }
