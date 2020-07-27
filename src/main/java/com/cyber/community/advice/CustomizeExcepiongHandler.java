@@ -40,14 +40,14 @@ public class CustomizeExcepiongHandler {
                 PrintWriter writer = response.getWriter();
                 writer.write(JSON.toJSONString(resultDTO));
                 writer.close();
-            } catch (IOException e) {
+            } catch (IOException ioe) {
             }
             return null;
         } else {
             if (ex instanceof CustomizeException) {
                 model.addAttribute("message", ex.getMessage());
             } else {
-                model.addAttribute(CustomizeErrorCode.SYSTEM_ERROR);
+                model.addAttribute(CustomizeErrorCode.SYSTEM_ERROR.getMessage());
             }
             return new ModelAndView("error");
 
